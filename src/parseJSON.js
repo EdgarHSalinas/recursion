@@ -14,15 +14,24 @@ var parseJSON = function(json) {
   // var next = function(ch) {
 
   // };
-
-  var next = ch => {
+  var next = function(ch) {
     if (ch && ch !== character ) {
       throw new SyntaxError("Expected '" + ch + "' instead of '" + character + "'");
     }
     character = json.charAt(index);
     index++;
-    return character;
+    return character; 
   };
+
+  
+  // var next = ch => {
+  //   if (ch && ch !== character ) {
+  //     throw new SyntaxError("Expected '" + ch + "' instead of '" + character + "'");
+  //   }
+  //   character = json.charAt(index);
+  //   index++;
+  //   return character;
+  // };
 
   // Helper 
   // Remove white space until a character is found
@@ -37,7 +46,8 @@ var parseJSON = function(json) {
   // parseString() - innerParser
   // parse a "string" value
   // return the parsed string
-  var parseString = () => {
+
+  var parseString = function() {
     var str = "";
     var exception = {
       '"'  : '"',
@@ -49,15 +59,27 @@ var parseJSON = function(json) {
       r    : '\r',
       t    : '\t'
     };
+  
+    // var str = "";
+    // var exception = {
+    //   '"'  : '"',
+    //   '\\' : '\\',
+    //   '/'  : '/',
+    //   b    : '\b',
+    //   f    : '\f',
+    //   n    : '\n',
+    //   r    : '\r',
+    //   t    : '\t'
+    // };
 
-    if(character === '"'){
-      while(next()){
-        if(character === '"'){
+    if (character === '"') {
+      while (next()) {
+        if (character === '"') {
           next('"');
           return str;
-        } else if(character === '\\'){
+        } else if (character === '\\') {
           next();
-          if(typeof exception[character] === 'string'){
+          if (typeof exception[character] === 'string') {
             str += exception[character];
           } else {
             break;
