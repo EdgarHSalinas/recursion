@@ -3,7 +3,7 @@
 
 // but you're not, so you'll write it from scratch:
 var parseJSON = function(json) {
-  console.log('string',json);
+  console.log(json);
   var index = 0;
   var character = ' ';
 
@@ -11,9 +11,7 @@ var parseJSON = function(json) {
   // Move to the next character in the json string
   // Optionally accept the ch Param to check for expected characters
   // return the next character at current index
-  // var next = function(ch) {
 
-  // };
   var next = function(ch) {
     if (ch && ch !== character ) {
       throw new SyntaxError("Expected '" + ch + "' instead of '" + character + "'");
@@ -22,16 +20,6 @@ var parseJSON = function(json) {
     index++;
     return character; 
   };
-
-  
-  // var next = ch => {
-  //   if (ch && ch !== character ) {
-  //     throw new SyntaxError("Expected '" + ch + "' instead of '" + character + "'");
-  //   }
-  //   character = json.charAt(index);
-  //   index++;
-  //   return character;
-  // };
 
   // Helper 
   // Remove white space until a character is found
@@ -59,18 +47,7 @@ var parseJSON = function(json) {
       r    : '\r',
       t    : '\t'
     };
-  
-    // var str = "";
-    // var exception = {
-    //   '"'  : '"',
-    //   '\\' : '\\',
-    //   '/'  : '/',
-    //   b    : '\b',
-    //   f    : '\f',
-    //   n    : '\n',
-    //   r    : '\r',
-    //   t    : '\t'
-    // };
+
 
     if (character === '"') {
       while (next()) {
@@ -95,29 +72,29 @@ var parseJSON = function(json) {
   // parseNumber() - innerParser
   // parse a number value [negative, positive, floats]
   // return the parsed number
-  var parseNumber = () => {
+  var parseNumber = function() {
     var str = "";
     var number;
 
-    if(character === '-'){
+    if (character === '-') {
       str += '-';
       next();
     }
 
-    while(character >= '0' && character <= '9'){
+    while (character >= '0' && character <= '9') {
       str += character;
       next();
     }
 
-    if(character === '.'){
+    if (character === '.') {
       str += character;
-      while(next() && character >= '0' && character <= '9'){
+      while (next() && character >= '0' && character <= '9') {
         str += character;
       }
     }
-
+    
     number = Number(str);
-
+   
     if (isNaN(number)) {
       throw new SyntaxError("Bad number");
     } else {
@@ -128,19 +105,19 @@ var parseJSON = function(json) {
   // parseArray() - innerParser
   // parse an array
   // return the parsed array
-  var parseArray = () => {
+  var parseArray = function() {
     var arr = [];
-    if (character === '['){
+    if (character === '[') {
       next();
       whitespace();
-      if(character === ']'){
+      if (character === ']') {
         next();
         return arr;
       }
-      while(character){
+      while (character) {
         arr.push(parseValue());
         whitespace();
-        if(character === ']'){
+        if (character === ']') {
           next();
           return arr;
         }
@@ -154,24 +131,26 @@ var parseJSON = function(json) {
   // parseObject() - innerParser
   // parse an object
   // return the parsed object
-  var parseObject = () => {
+  var parseObject = function() {
     var obj = {};
 
-    if(character === '{'){
+    if (character === '{') {
       next();
       whitespace();
-      if(character === '}'){
+      if (character === '}') {
         next();
         return obj;
       }
-      while(character){
+      while (character) {
         var key = parseString();
         whitespace();
         next(':');
+
         var value = parseValue();
         obj[key] = value;
         whitespace();
-        if(character === '}'){
+
+        if (character === '}') {
           next();
           return obj;
         }
@@ -183,10 +162,10 @@ var parseJSON = function(json) {
   };
 
   // parseSpecial() - innerParser
-  // parse some special values [booleans, null]
+  // parse some special values [booleans,false, null]
   // return the parsed value
-  var parseSpecial = () => {
-    if(character === 't'){
+  var parseSpecial = function() {
+    if (character === 't') {
       next('t');
       next('r');
       next('u');
@@ -194,7 +173,7 @@ var parseJSON = function(json) {
       return true;
     }
 
-    if(character === 'f'){
+    if (character === 'f') {
       next('f');
       next('a');
       next('l');
@@ -203,7 +182,7 @@ var parseJSON = function(json) {
       return false;
     }
 
-    if(character === 'n'){
+    if (character === 'n') {
       next('n');
       next('u');
       next('l');
@@ -215,11 +194,12 @@ var parseJSON = function(json) {
   // parseValue()
   // call the right parser depending on what he need to parse [string, number, array, object, special]
   // return the innerParser result accordingly
-  var parseValue = () => {
+  var parseValue = function() {
     whitespace();
-    if(character === '"'){
+
+    if (character === '"') {
       return parseString();
-    } else if (character === '-' || character >= '0' && character <= '9'){
+    } else if (character === '-' || character >= '0' && character <= '9') {
       return parseNumber();
     } else if (character === '[') {
       return parseArray();
